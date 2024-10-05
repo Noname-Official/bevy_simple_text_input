@@ -90,7 +90,7 @@ const CURSOR_HANDLE: Handle<Font> = Handle::weak_from_u128(10482756907980398621)
 ///     commands.spawn((NodeBundle::default(), TextInputBundle::default()));
 /// }
 /// ```
-#[derive(Bundle, Default, Reflect)]
+#[derive(Debug, Bundle, Default, Reflect, Clone)]
 pub struct TextInputBundle {
     /// A component containing the text input's settings.
     pub settings: TextInputSettings,
@@ -156,15 +156,15 @@ impl TextInputBundle {
 }
 
 /// The Bevy `TextStyle` that will be used when creating the text input's inner Bevy `TextBundle`.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputTextStyle(pub TextStyle);
 
 /// If true, the text input does not respond to keyboard events and the cursor is hidden.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputInactive(pub bool);
 
 /// A component that manages the cursor's blinking.
-#[derive(Component, Reflect)]
+#[derive(Debug, Component, Reflect, Clone)]
 pub struct TextInputCursorTimer {
     /// The timer that blinks the cursor on and off, and resets when the user types.
     pub timer: Timer,
@@ -181,7 +181,7 @@ impl Default for TextInputCursorTimer {
 }
 
 /// A component containing the text input's settings.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputSettings {
     /// If true, text is not cleared after pressing enter.
     pub retain_on_submit: bool,
@@ -190,7 +190,7 @@ pub struct TextInputSettings {
 }
 
 /// Text navigation actions that can be bound via `TextInputNavigationBindings`.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TextInputAction {
     /// Moves the cursor one char to the left.
     CharLeft,
@@ -216,10 +216,11 @@ pub enum TextInputAction {
 /// All modifiers must be held when the primary key is pressed to perform the action.
 /// The first matching action in the list will be performed, so a binding that is the same as another with additional
 /// modifier keys should be earlier in the vector to be applied.
-#[derive(Resource)]
+#[derive(Debug, Resource, Clone)]
 pub struct TextInputNavigationBindings(pub Vec<(TextInputAction, TextInputBinding)>);
 
 /// A combination of a key and required modifier keys that might trigger a `TextInputAction`.
+#[derive(Debug, Clone)]
 pub struct TextInputBinding {
     /// Primary key
     key: KeyCode,
@@ -286,11 +287,11 @@ impl Default for TextInputNavigationBindings {
 }
 
 /// A component containing the current value of the text input.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputValue(pub String);
 
 /// A component containing the placeholder text that is displayed when the text input is empty and not focused.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputPlaceholder {
     /// The placeholder text.
     pub value: String,
@@ -300,18 +301,18 @@ pub struct TextInputPlaceholder {
     pub text_style: Option<TextStyle>,
 }
 
-#[derive(Component, Reflect)]
+#[derive(Debug, Component, Reflect, Clone)]
 struct TextInputPlaceholderInner;
 
 /// A component containing the current text cursor position.
-#[derive(Component, Default, Reflect)]
+#[derive(Debug, Component, Default, Reflect, Clone)]
 pub struct TextInputCursorPos(pub usize);
 
-#[derive(Component, Reflect)]
+#[derive(Debug, Component, Reflect, Clone)]
 struct TextInputInner;
 
 /// An event that is fired when the user presses the enter key.
-#[derive(Event)]
+#[derive(Debug, Event, Clone)]
 pub struct TextInputSubmitEvent {
     /// The text input that triggered the event.
     pub entity: Entity,
@@ -320,7 +321,7 @@ pub struct TextInputSubmitEvent {
 }
 
 /// A convenience parameter for dealing with a text input's inner Bevy `Text` entity.
-#[derive(SystemParam)]
+#[derive(Debug, SystemParam)]
 struct InnerText<'w, 's> {
     text_query: Query<'w, 's, &'static mut Text, With<TextInputInner>>,
     children_query: Query<'w, 's, &'static Children>,
